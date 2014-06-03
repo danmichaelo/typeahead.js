@@ -1462,7 +1462,6 @@
             },
             _onBlurred: function onBlurred() {
                 this.isActivated = false;
-                this.dropdown.empty();
                 this.dropdown.close();
             },
             _onEnterKeyed: function onEnterKeyed(type, $e) {
