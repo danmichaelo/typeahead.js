@@ -78,6 +78,15 @@ var Dataset = (function() {
         .html(getSuggestionsHtml())
         .prepend(that.templates.header ? getHeaderHtml() : null)
         .append(that.templates.footer ? getFooterHtml() : null);
+
+        for (var key in suggestions[0]) {
+          if (suggestions[0].hasOwnProperty(key)) {
+            if (query == suggestions[0][key]) {
+              that.trigger("matched", suggestions[0]);
+              break;
+            }
+          }
+        }
       }
 
       this.trigger('rendered');

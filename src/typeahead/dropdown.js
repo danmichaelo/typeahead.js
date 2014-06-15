@@ -36,7 +36,8 @@ var Dropdown = (function() {
 
     _.each(this.datasets, function(dataset) {
       that.$menu.append(dataset.getRoot());
-      dataset.onSync('rendered', that._onRendered, that);
+      dataset.onSync('rendered', that._onRendered, that)
+      .onSync('matched', that._onMatched, that);
     });
   }
 
@@ -68,6 +69,10 @@ var Dropdown = (function() {
       this.trigger('datasetRendered');
 
       function isDatasetEmpty(dataset) { return dataset.isEmpty(); }
+    },
+
+    _onMatched: function onMatched(type, datum) {
+      this.trigger('datasetMatched', datum);
     },
 
     _hide: function() {

@@ -60,7 +60,8 @@ var Typeahead = (function() {
     .onSync('cursorRemoved', this._onCursorRemoved, this)
     .onSync('opened', this._onOpened, this)
     .onSync('closed', this._onClosed, this)
-    .onAsync('datasetRendered', this._onDatasetRendered, this);
+    .onAsync('datasetRendered', this._onDatasetRendered, this)
+    .onAsync('datasetMatched', this._onDatasetMatched, this);
 
     this.input = new Input({ input: $input, hint: $hint })
     .onSync('focused', this._onFocused, this)
@@ -108,6 +109,10 @@ var Typeahead = (function() {
 
     _onDatasetRendered: function onDatasetRendered() {
       this._updateHint();
+    },
+
+    _onDatasetMatched: function onDatasetMatched(type, datum) {
+      this.eventBus.trigger('matched', datum);
     },
 
     _onOpened: function onOpened() {
