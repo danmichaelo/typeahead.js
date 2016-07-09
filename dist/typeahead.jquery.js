@@ -573,7 +573,18 @@
                     this.$el.html(getEmptyHtml()).prepend(that.templates.header ? getHeaderHtml() : null).append(that.templates.footer ? getFooterHtml() : null);
                 } else if (hasSuggestions) {
                     this.$el.html(getSuggestionsHtml()).prepend(that.templates.header ? getHeaderHtml() : null).append(that.templates.footer ? getFooterHtml() : null);
+
+                    for (var key in suggestions[0]) {
+                      if (suggestions[0].hasOwnProperty(key)) {
+                        if (query == suggestions[0][key]) {
+                            console.log('Dataset::matched');
+                            that.trigger("matched", suggestions[0]);
+                            break;
+                        }
+                      }
+                    }
                 }
+
                 this.trigger("rendered");
                 function getEmptyHtml() {
                     return that.templates.empty({
@@ -682,6 +693,7 @@
             _.each(this.datasets, function(dataset) {
                 that.$menu.append(dataset.getRoot());
                 dataset.onSync("rendered", that._onRendered, that);
+                dataset.onSync("matched", that._onMatched, that);
             });
         }
         _.mixin(Dropdown.prototype, EventEmitter, {
@@ -702,6 +714,11 @@
                 function isDatasetEmpty(dataset) {
                     return dataset.isEmpty();
                 }
+            },
+            _onMatched: function onMatched(type, datum) {
+              console.log('_onMatched');
+              console.log(datum);
+              this.trigger('datasetMatched', datum);
             },
             _hide: function() {
                 this.$menu.hide();
@@ -862,6 +879,12 @@
                 menu: $menu,
                 datasets: o.datasets
             }).onSync("suggestionClicked", this._onSuggestionClicked, this).onSync("cursorMoved", this._onCursorMoved, this).onSync("cursorRemoved", this._onCursorRemoved, this).onSync("opened", this._onOpened, this).onSync("closed", this._onClosed, this).onAsync("datasetRendered", this._onDatasetRendered, this);
+
+            this.dropdown.onSync("datasetMatched", function(evt, datum) {
+                console.log('Typeahead::matched');
+                this.eventBus.trigger("matched", datum);
+            }, this);
+
             this.input = new Input({
                 input: $input,
                 hint: $hint
